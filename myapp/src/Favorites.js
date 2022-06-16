@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import Message from "./Message";
-const WatchList = () => {
+const Favorites = () => {
   const [movies, setMovies] = useState(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(null);
@@ -11,17 +11,19 @@ const WatchList = () => {
     if (array == null) return;
 
     document
-      .querySelector(".watchlist .slider")
+      .querySelector(".favorites .slider")
       .style.setProperty("--maxindex", parseInt(array.length / 6));
   }
   const DeleteMovie = useCallback(async (movie) => {
-    await fetch(`/delete/watchlist/${movie}`);
+    await fetch(`/delete/favorites/${movie}`);
     console.log("delete");
     await requestMovies();
-    setFlashMessage(`the movie ${movie} was deleted succesfully`);
+    setFlashMessage(
+      `${movie} was succesfully deleted from your favorites list`
+    );
   }, []);
   async function requestMovies() {
-    fetch("/watchlist")
+    fetch("/favorites")
       .then((res) => res.json())
       .then((json) => {
         if (json.sessionError != null) setMessage(true);
@@ -36,19 +38,19 @@ const WatchList = () => {
 
   return (
     <>
-      <div className="watchlist">
+      <div className="favorites">
         <div className="slider-container">
           <button className="handle left-handle">&#8249;</button>
           <div className="slider">
             {loading === false && message && (
               <>
-                <h1> sign in to access your watchlist</h1>
+                <h1> sign in to access your Favorites List</h1>
                 <h2>Save movies to keep track of what you want to watch</h2>
               </>
             )}
             {loading === true && !movies && <h1>loading...</h1>}
             {loading === false && movies?.length === 0 && (
-              <h1>Your watchList is empty </h1>
+              <h1>Your Favorites List is empty </h1>
             )}
 
             {loading === false &&
@@ -79,8 +81,8 @@ const WatchList = () => {
           <button className="handle right-handle">&#8250;</button>
         </div>
       </div>
-      {flashMessage && <Message className="success" message={flashMessage} />}
+      {flashMessage && <Message message={flashMessage} className="success" />}
     </>
   );
 };
-export default WatchList;
+export default Favorites;
