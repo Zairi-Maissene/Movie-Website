@@ -20,6 +20,7 @@ con.connect(function (err) {
 });
 const query = util.promisify(con.query).bind(con);
 const app = express();
+const PORT=process.env.port|| 8000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 app.use(express.static(path.resolve(__dirname, '../myapp/build')));
@@ -35,7 +36,7 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: false, 
   })
 );
 app.post("/signup", async (req, res) => {
