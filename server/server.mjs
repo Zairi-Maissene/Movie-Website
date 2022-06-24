@@ -20,16 +20,14 @@ con.connect(function (err) {
 });
 const query = util.promisify(con.query).bind(con);
 const app = express();
-const PORT=process.env.port|| 8000;
+const PORT=process.env.PORT || 8000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 app.use(express.static(path.resolve(__dirname, '../myapp/build')));
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../myapp/build', 'index.html'));
 });
-app.get("/api", (req, res) => {
-  res.json({ name: "Maissene" });
-});
+
 app.use(urlencoded({ extended: false }));
 app.use(json());
 app.use(
@@ -111,9 +109,7 @@ app.post("/favorites", (req, res) => {
     }
   );
 });
-app.listen(8000, () => {
-  console.log("app listening on port 8000");
-});
+
 app.get("/watchlist", (req, res) => {
   console.log(req.session.user);
   if (!req.session.user) return res.json({ sessionError: true });
@@ -151,4 +147,7 @@ app.get("/delete/:list/:movie", (req, res) => {
     }
   );
   return res.end();
+});
+app.listen(PORT, () => {
+  console.log("app listening on port 8000");
 });
