@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useLocation } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import requestgenres from "./requestGenres";
 import getMovieData from "./getMovieData";
 import MovieCast from "./MovieCast";
@@ -8,6 +8,8 @@ import Recommendations from "./Recommendations";
 import Message from "./Message";
 
 const Movie = () => {
+  const movie = useParams().movie;
+  console.log(movie);
   const mydata = useLocation();
   const [loading, setLoading] = useState("loading");
   console.log(mydata);
@@ -35,6 +37,8 @@ const Movie = () => {
       .then((json) => {
         if (json.message === "success")
           setFlashMessage(`${title} succesfully added to your favorites List`);
+        if (json.message === "info")
+          setFlashMessage(`${title} is already in your Favorites List`);
         if (json.message === "error") setFlashMessage("Something went Wrong");
         if (json.sessionError)
           setFlashMessage("You need to sign in to your account");
@@ -78,9 +82,9 @@ const Movie = () => {
       // console.log(loading)
       setmyjson(json);
     }
-
-    setSingleMovieData(mydata.state);
-  }, [mydata, loading]);
+    setSingleMovieData(movie);
+    setFlashMessage(null);
+  }, [movie]);
 
   return (
     <>
@@ -116,7 +120,32 @@ const Movie = () => {
         )}
         {myjson && genreList && (
           <>
-            <div className="movieDescription">
+          <div className="moviePoster">
+              <img
+                src={`https://image.tmdb.org/t/p/original${myjson.poster_path}`}
+                alt={myjson.title}
+              />
+              <div className="gradient"></div>
+              <div className="icons">
+                {/* <div className="star-ratings-css" title={`${(myjson.vote_average/10).toFixed(3)}`}></div> */}
+                <Trailer id={myjson.id} />
+                <div className="itemcontainer">
+                  <h5>Add to favorites</h5>{" "}
+                  <i
+                    onClick={(e) => postFavorites(e)}
+                    className=" bi bi-heart favorites"
+                  ></i>
+                </div>
+                <div className="itemcontainer">
+                  <h5>Watch Later</h5>
+                  <i
+                    className="bi bi-bookmark-plus"
+                    onClick={(e) => postWatchList(e)}
+                  ></i>
+                </div>
+              </div>
+            </div>
+            <div className="movieDescription">  
               <div className="descriptionHeader">
                 <div className="center">
                   <h1>{myjson.title}</h1>
@@ -144,37 +173,17 @@ const Movie = () => {
               <hr className="line-break" />
               <MovieCast id={myjson.id} />
             </div>
-            <div className="moviePoster">
-              <img
-                src={`https://image.tmdb.org/t/p/original${myjson.poster_path}`}
-                alt={myjson.title}
-              />
-              <div className="gradient"></div>
-              <div className="icons">
-                {/* <div className="star-ratings-css" title={`${(myjson.vote_average/10).toFixed(3)}`}></div> */}
-                <Trailer id={myjson.id} />
-                <div className="itemcontainer">
-                  <h5>Add to favorites</h5>{" "}
-                  <i
-                    onClick={(e) => postFavorites(e)}
-                    className=" bi bi-heart favorites"
-                  ></i>
-                </div>
-                <div className="itemcontainer">
-                  <h5>Watch Later</h5>
-                  <i
-                    className="bi bi-plus-square watchlist"
-                    onClick={(e) => postWatchList(e)}
-                  ></i>
-                </div>
-              </div>
-            </div>{" "}
+            
           </>
         )}
       </div>
       <Recommendations id={myjson?.id} name={myjson?.title} />
       {flashMessage && (
-        <Message className={`${status}`} message={flashMessage} />
+        <Message
+          className={`${status}`}
+          message={flashMessage}
+          movie={myjson.title}
+        />
       )}
     </>
   );

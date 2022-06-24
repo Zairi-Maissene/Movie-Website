@@ -16,41 +16,14 @@ const App = () => {
   console.log(submit);
   return (
     <BrowserRouter>
-      <div>
-        <header>
-          <div id="search-bar">
-            <input
-              type="text"
-              id="search-input"
-              placeholder="Search a movie ..."
-              onChange={(e) => {
-                setmovieName(e.target.value);
-              }}
-              required
-            />
-
-            <Link to="/Details" state={movieName} className="">
-              <button
-                onClick={() => {
-                  setSubmit(true);
-                }}
-                className="btn btn-light"
-              >
-                <i class="bi bi-search"></i>
-              </button>
-            </Link>
-          </div>
-          <Navbar />
-        </header>
-
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/Details" element={<Movie name={movieName} />} />
-          <Route path="/Movies" element={<MoviesPage />} />
-          <Route path="/watchList" element={<WatchList />} />
-          <Route path="/favorites" element={<Favorites />} />
-        </Routes>
-      </div>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/Details/:movie" element={<Movie />} />
+        <Route path="/Movies" element={<MoviesPage />} />
+        <Route path="/watchList" element={<WatchList />} />
+        <Route path="/favorites" element={<Favorites />} />
+      </Routes>
     </BrowserRouter>
   );
 };

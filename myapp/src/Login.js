@@ -6,6 +6,9 @@ const Login = () => {
   const [error, setError] = useState(null);
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [showSignupForm, setShowSignupForm] = useState(false);
+  const refreshpage = () => {
+    window.location.reload(true);
+  };
   const handleLoginClick = useCallback((e) => {
     e.preventDefault();
     const email = document.querySelector("#lemail").value;
@@ -27,14 +30,17 @@ const Login = () => {
       .then((res) => res.json())
       .then((json) => {
         if (json.error) setError(json.error);
-        else setUser(json.user);
+        else {
+          setUser(json.user);
+          refreshpage();
+        }
       });
   }, []);
   const handleLogout = useCallback(async () => {
     await fetch("/logout");
     setUser(null);
     setShowLoginForm(false);
-    console.log("logout");
+    refreshpage();
   });
   const handleSignupClick = useCallback((e) => {
     e.preventDefault();
@@ -58,11 +64,14 @@ const Login = () => {
       .then((res) => res.json())
       .then((json) => {
         if (json.error != null) setError(json.error);
-        else setUser(json.email);
+        else {
+          setUser(json.email);
+          refreshpage();
+        }
       });
   }, []);
-  const ToggleDropDown = useCallback(() => {
-    document.querySelector(".dropdown-menu").classList.toggle("open");
+  const ToggleMenu = useCallback(() => {
+    document.querySelector(".popup-menu").classList.toggle("open");
   });
   useEffect(() => {
     requestUser();
@@ -79,10 +88,10 @@ const Login = () => {
   if (user)
     return (
       <li className="logged-in-user">
-        <button className="login-button" onClick={() => ToggleDropDown()}>
+        <button className="login-button" onClick={() => ToggleMenu()}>
           {user}
         </button>
-        <div className="dropdown-menu">
+        <div className="popup-menu">
           <button
             id="logout"
             onClick={() => {
@@ -104,7 +113,13 @@ const Login = () => {
         <div className="login-form">
           <div>
             <p>Welcome to MMDB!</p>
-            <button id="close-form" onClick={() => setShowLoginForm(false)}>
+            <button
+              id="close-form"
+              onClick={() => {
+                setShowLoginForm(false);
+                setError(null);
+              }}
+            >
               X
             </button>
             <div className="input-block">
@@ -161,11 +176,19 @@ const Login = () => {
         <div className="login-form">
           <div>
             <p>Welcome to MMDB!</p>
-            <button id="close-form" onClick={() => setShowSignupForm(false)}>
+            <button
+              id="close-form"
+              onClick={() => {
+                setShowSignupForm(false);
+                setError(null);
+              }}
+            >
               X
             </button>
             <div className="input-block">
-              <label className="input-label" htmlFor="email"></label>
+              <label className="input-label" htmlFor="email">
+                {"E-mail"}
+              </label>
               <input
                 type="email"
                 name="email"
@@ -176,7 +199,7 @@ const Login = () => {
             </div>
             <div className="input-block">
               <label htmlFor="username" className="input-label">
-                {" "}
+                {"Username"}
               </label>
               <input
                 type="text"
@@ -186,9 +209,10 @@ const Login = () => {
                 required
               />
             </div>
+
             <div className="input-block">
               <label htmlFor="password" className="input-label">
-                {" "}
+                {"Password"}
               </label>
               <input
                 type="text"
@@ -197,12 +221,13 @@ const Login = () => {
                 placeholder="password"
                 required
               />
+              {error && <Message message={error} className="login-error" />}
             </div>
 
             <button
               type="submit"
               id="Ssubmit"
-              onClick={() => handleSignupClick}
+              onClick={(e) => handleSignupClick(e)}
             >
               Submit
             </button>

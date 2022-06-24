@@ -21,14 +21,8 @@ const HomeCarousel = () => {
   return (
     <div className="CarouselContainer">
       <h1>Latest Movies</h1>
-      <div className="HomeCarousel">
-        <div className="progress-bar">
-          <div className="progress-bar-item active"></div>
-          <div className="progress-bar-item"></div>
-          <div className="progress-bar-item"></div>
-          <div className="progress-bar-item"></div>
-          <div className="progress-bar-item"></div>
-        </div>
+      <div className="HomeCarousel slider-container">
+        <button className="handle left-handle">&#8249;</button>
         <div className="slider">
           {myjson?.map((element) => (
             <div
@@ -42,7 +36,7 @@ const HomeCarousel = () => {
                 <Genres array={element.genre_ids} />
                 <p>
                   View Details
-                  <Link to="/Details" state={element.title}>
+                  <Link to={`/Details/${element.title}`}>
                     <button>
                       <i class="bi bi-caret-right"></i>
                     </button>
@@ -52,6 +46,7 @@ const HomeCarousel = () => {
             </div>
           ))}
         </div>
+        <button className="handle right-handle">&#8250;</button>
       </div>
     </div>
   );

@@ -25,21 +25,17 @@ function handleClick(handle) {
       slider.style.setProperty("--slider-index", sliderIndex + 1);
   }
 }
-setInterval(() => {
+const interval = setInterval(() => {
   const homeSlider = document.querySelector(".HomeCarousel .slider");
   if (homeSlider == null) return;
   const sliderIndex = parseInt(
     getComputedStyle(homeSlider).getPropertyValue("--slider-index")
   );
   homeSlider.style.setProperty("--slider-index", (sliderIndex + 1) % 5);
-  handleProgressBar(sliderIndex);
+
   handleAnimation(sliderIndex);
-}, 3500);
-function handleProgressBar(sliderIndex) {
-  const baritems = document.querySelectorAll(".progress-bar-item");
-  baritems[sliderIndex].classList.remove("active");
-  baritems[(sliderIndex + 1) % 5].classList.add("active");
-}
+}, 10000);
+
 function handleAnimation(sliderIndex) {
   const Movies = document.querySelectorAll(".slider .Movie");
   Movies[sliderIndex].classList.remove("fade-in");

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import Genres from "./Genres";
 import HomeCarousel from "./HomeCarousel";
@@ -28,7 +28,7 @@ const HomeMovies = () => {
   const [checked, setChecked] = useState(null);
   const [loading, setLoading] = useState(null);
   const nbFetch = useRef(0);
-  const [filter, setFilter] = useState(null);
+  const [filter, setFilter] = useState("All");
   const [page, setPage] = useState(1);
   const [myjson, setmyjson] = useState(null);
 
@@ -76,9 +76,10 @@ const HomeMovies = () => {
   }, [sortOption, page, filter]);
 
   const changeSortOption = (option) => {
-    if (option === "Rating") setSortOption("vote_average");
-    if (option === "Date") setSortOption("release_date");
-    if (option === "Popularity") setSortOption("popularity");
+    if (option === "vote_average") return "Rating";
+    if (option === "release_date") return "Date";
+    if (option === "popularity") return "Popularity";
+    return null;
   };
   function Filter(array) {
     if (!filter || filter === "All") return array;
@@ -91,87 +92,77 @@ const HomeMovies = () => {
       if (GenresJSON[i].name === genre) return GenresJSON[i].id;
     }
   }
+  const toggleDropDown = useCallback((select) => {
+    document
+      .querySelector(`.${select} .dropdown-menu `)
+      .classList.toggle("open");
+  }, []);
 
   //
   return (
     <>
       <div className="header">
-        <div className="filter">
-          <div class="form-check">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="flexRadioDefault"
-              id="flexRadioDefault1"
-              checked={checked}
-              onClick={() => {
-                if (checked) {
-                  setFilter(null);
-                }
-                setChecked((prev) => !prev);
-              }}
-            />
-            <label class="form-check-label" for="flexRadioDefault1">
-              Filter Genres
-            </label>
+        <div className="select-container">
+          <p>Filter Genres</p>
+          <div className="select filter-select">
+            <div>
+              <span>{filter || "Filter Genres"}</span>
+              <button onClick={() => toggleDropDown("filter-select")}>
+                &#9660;
+              </button>
+            </div>
+            <ul className="dropdown-menu">
+              <li onClick={() => setFilter("All")}>All</li>
+              <li onClick={() => setFilter("Comedy")}>Comedy</li>
+              <li onClick={() => setFilter("Action")}>Action</li>
+              <li onClick={() => setFilter("Romance")}>Romance</li>
+              <li onClick={() => setFilter("Drama")}>Drama</li>
+              <li onClick={() => setFilter("Documentary")}>Documentary</li>
+            </ul>
           </div>
-          <select
-            value={filter}
-            onChange={(e) => {
-              setFilter(e.target.value);
-              setPage(1);
-            }}
-            disabled={!checked}
-          >
-            <option>All</option>
-            <option>Comedy</option>
-            <option>Action</option>
-            <option>Romance</option>
-            <option>Drama</option>
-            <option>Documentary</option>
-          </select>
         </div>
-        <div className="sort">
-          <label className="mx-1" htmlFor="sort">
-            Sort by
-          </label>
-          <select
-            id="sort"
-            onChange={(e) => {
-              changeSortOption(e.target.value);
-              setPage(1);
-            }}
-          >
-            <option>Popularity</option>
-            <option>Rating</option>
-            <option>Date</option>
-          </select>
+        <div className="select-container">
+          <p>Sort Movies</p>
+
+          <div className="select sort-select">
+            <div>
+              <span>{changeSortOption(sortOption)}</span>
+              <button onClick={() => toggleDropDown("sort-select")}>
+                &#9660;
+              </button>
+            </div>
+            <ul className="dropdown-menu">
+              <li onClick={() => setSortOption("popularity")}>Popularity</li>
+              <li onClick={() => setSortOption("vote_average")}>Rating</li>
+              <li onClick={() => setSortOption("release_date")}>Date</li>
+            </ul>
+          </div>
         </div>
         <div className="pages">
           <span>Pages</span>
           <button
-            className="btn btn-light"
+            className="btn page"
             onClick={() => setPage(1)}
             disabled={myjson && !Filter(myjson)[0]}
           >
             1
           </button>
           <button
-            className="btn btn-light"
+            className="btn page"
             onClick={() => setPage(2)}
             disabled={myjson && !Filter(myjson)[20]}
           >
             2
           </button>
           <button
-            className="btn btn-light"
+            className="btn page"
             onClick={() => setPage(3)}
             disabled={myjson && !Filter(myjson)[40]}
           >
             3
           </button>
           <button
-            className="btn btn-light"
+            className="btn page"
             onClick={() => setPage(4)}
             disabled={myjson && !Filter(myjson)[60]}
           >
@@ -226,8 +217,7 @@ const HomeMovies = () => {
                   }}
                 >
                   <Link
-                    to="/Details"
-                    state={element.title}
+                    to={`/Details/:${element.title}`}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
                     <div className="HoverDetails">

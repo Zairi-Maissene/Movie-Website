@@ -18,7 +18,7 @@ const Recommendations = (props) => {
   return (
     <div className="recommendations">
       <h3 className="mb-4">Watch if you like {props.name}</h3>
-      <div className="slider-container">
+      <div className="slider-container list">
         <button className="handle left-handle">&#8249;</button>
         <div className="slider">
           {myjson &&
@@ -30,8 +30,7 @@ const Recommendations = (props) => {
                 }}
               >
                 <Link
-                  to="/Details"
-                  state={element.title}
+                  to={`/Details/:${element.title}`}
                   style={{ textDecoration: "none", color: "inherit" }}
                 >
                   <div className="HoverDetails">

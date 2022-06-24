@@ -37,25 +37,28 @@ const Favorites = () => {
   }, []);
 
   return (
-    <>
-      <div className="favorites">
-        <div className="slider-container">
-          <button className="handle left-handle">&#8249;</button>
-          <div className="slider">
-            {loading === false && message && (
-              <>
-                <h1> sign in to access your Favorites List</h1>
-                <h2>Save movies to keep track of what you want to watch</h2>
-              </>
-            )}
-            {loading === true && !movies && <h1>loading...</h1>}
-            {loading === false && movies?.length === 0 && (
-              <h1>Your Favorites List is empty </h1>
-            )}
+    <div className="list-container">
+      <h2>Your Favorites</h2>
+      {loading === false && message && (
+        <div className="logged-out user-list">
+          <p> sign in to access your Favorites List</p>
+          <p>Save your favorite movies and recommmend them to friends!</p>
+          <i className=" bi bi-heart"></i>
+        </div>
+      )}
+      {loading === true && !movies && <h1>loading...</h1>}
+      {loading === false && movies?.length === 0 && (
+        <div className="user-list empty">
+          <h1>Your Favorites List is empty </h1>
+        </div>
+      )}
 
-            {loading === false &&
-              movies &&
-              movies.map((element) => (
+      {loading === false && movies?.length > 0 && (
+        <div className="favorites user-list">
+          <div className="slider-container list">
+            <button className="handle left-handle">&#8249;</button>
+            <div className="slider">
+              {movies.map((element) => (
                 <div
                   className="moviecontainer"
                   style={{
@@ -63,26 +66,30 @@ const Favorites = () => {
                   }}
                 >
                   <div className="HoverDetails">
-                    <h1 className="movieTitle">{element.movie}</h1>
-                    <button onClick={() => DeleteMovie(element.movie)}>
+                    <p className="movieTitle">{element.movie}</p>
+                    <button
+                      className="user-list-button delete"
+                      onClick={() => DeleteMovie(element.movie)}
+                    >
                       X
                     </button>
                     <Link
-                      to="/Details"
-                      state={element.movie}
+                      to={`/Details/:${element.movie}`}
                       style={{ textDecoration: "none", color: "inherit" }}
                     >
-                      <button>View Details</button>
+                      <button className="user-list-button">View Details</button>
                     </Link>
                   </div>
                 </div>
               ))}
+            </div>
+            <button className="handle right-handle">&#8250;</button>
           </div>
-          <button className="handle right-handle">&#8250;</button>
         </div>
-      </div>
+      )}
+
       {flashMessage && <Message message={flashMessage} className="success" />}
-    </>
+    </div>
   );
 };
 export default Favorites;
